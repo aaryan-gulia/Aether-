@@ -1,5 +1,6 @@
 #include "Window.h"
 #include "SDL_error.h"
+#include "SDL_render.h"
 #include "SDL_video.h"
 #include <iostream>
 
@@ -15,17 +16,23 @@ m_FullScreen(fullscreen){
     std::cout<<"Error creating SDL window: "<<SDL_GetError()<<std::endl;
   }
     
-  m_DrawWindow = SDL_GetWindowSurface(m_Window);
+  m_Rendrer = SDL_CreateRenderer(m_Window, -1, SDL_RENDERER_ACCELERATED);
 
-  if(!m_DrawWindow){
+  if(!m_Rendrer){
     std::cout<<"Error creating SDL window surface: "<<SDL_GetError()<<std::endl;
   }
 }
 
-SDL_Surface* Window::getDrawWindow(){
-  return m_DrawWindow;
+
+SDL_Renderer* Window::getRenderer(){
+  return m_Rendrer;
+}
+
+SDL_Window* Window::getWindow(){
+  return m_Window;
 }
 
 void Window::update(){
-  SDL_UpdateWindowSurface(m_Window);
+  SDL_RenderClear(m_Rendrer);
+  SDL_RenderPresent(m_Rendrer);
 }

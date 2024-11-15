@@ -9,12 +9,13 @@ class Window{
   bool m_FullScreen;
 
   SDL_Window* m_Window = NULL;
-  SDL_Surface* m_DrawWindow = NULL;
-
+  SDL_Renderer* m_Rendrer = NULL;
+  
   public:
   Window(float height, float width, const char* title, bool fullscreen = false);
   
-  SDL_Surface* getDrawWindow();
+  SDL_Renderer* getRenderer();
+  SDL_Window* getWindow();
 
   void update();
   
