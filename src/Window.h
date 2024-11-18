@@ -26,6 +26,7 @@ class Window{
   void drawEntity();
   
   SDL_Renderer* getRenderer();
+  ResourceManager* getResourceManager();
   SDL_Window* getWindow();
 
   ~Window(){

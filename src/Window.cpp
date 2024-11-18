@@ -55,6 +55,10 @@ SDL_Window* Window::getWindow(){
   return m_Window;
 }
 
+ResourceManager* Window::getResourceManager(){
+  return &m_resourceManager;
+}
+
 void Window::clear(){
   SDL_RenderClear(m_Rendrer);
 }

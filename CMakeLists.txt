@@ -51,6 +51,7 @@ add_executable(${PROJECT_NAME} src/main.cpp
 src/Game.cpp
 src/Window.cpp
 src/ResourceManager.cpp
+src/Map.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} SDL2 SDL2_image jsoncpp_lib)

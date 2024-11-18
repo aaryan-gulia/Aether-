@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Map.h"
 #include "SDL_events.h"
 #include "SDL_rect.h"
 #include "SDL_render.h"
@@ -17,6 +18,8 @@ void Game::run(){
   Window window(WindowHeight, WindowWidth, WindowTitle);
 
   SDL_Event event;
+  Map<100,100> map;
+  map.init();
 
   while(m_state){
 
@@ -25,9 +28,7 @@ void Game::run(){
     SDL_SetRenderDrawColor(window.getRenderer(), 0, 0, 0, 255);
     
     window.clear();
-
-    window.drawEntity();
-
+    map.render(window);
     window.render();
     
   }
