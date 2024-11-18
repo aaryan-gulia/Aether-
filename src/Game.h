@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Window.h"
-#include "Event.h"
 
 class Game{
 

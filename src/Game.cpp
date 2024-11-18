@@ -23,20 +23,12 @@ void Game::run(){
     handleEvent(event);
     
     SDL_SetRenderDrawColor(window.getRenderer(), 0, 0, 0, 255);
-    SDL_RenderClear(window.getRenderer());
     
+    window.clear();
 
-    SDL_Rect rect;
-    rect.x = 100;
-    rect.y = 200;
-    rect.w = 200;
-    rect.h = 200;    
-    
-    SDL_SetRenderDrawColor(window.getRenderer(), 255, 255, 255, 255);
-    
-    SDL_RenderDrawRect(window.getRenderer(), &rect);
+    window.drawEntity();
 
-    SDL_RenderPresent(window.getRenderer());
+    window.render();
     
   }
 }

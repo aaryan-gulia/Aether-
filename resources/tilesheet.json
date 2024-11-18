@@ -1,0 +1,7 @@
+{
+  "tilesheet_path": "../resources/tilesheet_basic.png",
+  "tiles":{
+    "grass": {"x":192,"y":256},
+    "wall": {"x":0,"y":256},
+  }
+}
