@@ -1,7 +1,7 @@
 {
-  "tilesheet_path": "../resources/tilesheet_basic.png",
+  "tilesheet_path": "../resources/terrain_tiles_v2.png",
   "tiles":{
-    "grass": {"x":192,"y":256},
-    "wall": {"x":0,"y":256},
+    "grass": {"x":256,"y":448},
+    "wall": {"x":128,"y":448},
   }
 }

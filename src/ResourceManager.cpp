@@ -11,6 +11,7 @@ const char* TilesheetFile = "../resources/tilesheet.json";
 void ResourceManager::init(SDL_Renderer* renderer){
   loadTileTextures(TilesheetFile, renderer);
   loadTileSrcRects(TilesheetFile);
+  loadPlayerSprite(TilesheetFile, renderer);
 }
 
 
@@ -40,8 +41,6 @@ void ResourceManager::loadTileSrcRects(const char* json_file_name){
   Json::Value tilesheet_info;
   tilesheet_info_file >> tilesheet_info;
 
-  std::cout<<tilesheet_info;
-
   m_TilesSrcRects.emplace_back(buildTileSrcRect(tilesheet_info["tiles"]["grass"]["x"].asInt(), 
                                                 tilesheet_info["tiles"]["grass"]["y"].asInt()));
   m_TilesSrcRects.emplace_back(buildTileSrcRect(tilesheet_info["tiles"]["wall"]["x"].asInt(), 
@@ -60,10 +59,26 @@ SDL_Rect ResourceManager::buildTileSrcRect(uint32_t x_pos, uint32_t y_pos){
   return src_rect;
 }
 
+void ResourceManager::loadPlayerSprite(const char* json_file_name, SDL_Renderer* renderer){
+
+  SDL_Surface* tempSurface = IMG_Load("../resources/mystic_woods_free_2/sprites/characters/player.png");
+  SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, tempSurface);
+  m_PlayerTextures = tex;
+
+  if(!m_PlayerTextures){
+    std::cout<<"Error creating SDL Player Texture: "<<SDL_GetError()<<std::endl;    
+  }
+  
+}
+
 SDL_Texture* ResourceManager::getTileTextures(){
   return m_TilesTextures;
 }
 
 SDL_Rect* ResourceManager::getTileSrcRect(Tile::Type type){
   return &m_TilesSrcRects.at(type);
+}
+
+SDL_Texture* ResourceManager::getPlayerTextures(){
+  return m_PlayerTextures;
 }

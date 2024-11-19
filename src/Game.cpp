@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Map.h"
+#include "Player.h"
 #include "SDL_events.h"
 #include "SDL_rect.h"
 #include "SDL_render.h"
@@ -19,18 +20,22 @@ void Game::run(){
 
   SDL_Event event;
   Map<100,100> map;
+  Player player;
   map.init();
+  
 
   while(m_state){
 
-    handleEvent(event);
-    
-    SDL_SetRenderDrawColor(window.getRenderer(), 0, 0, 0, 255);
-    
+    while(SDL_PollEvent(&event) != 0){
+      handleEvent(event);
+      map.handleEvent(event);
+      player.handleEvent(event);
+    }
+   
     window.clear();
     map.render(window);
-    window.render();
-    
+    player.render(window);
+    window.render();    
   }
 }
 
@@ -43,10 +48,8 @@ void Game::initialise(){
 }
 
 void Game::handleEvent(SDL_Event& event){
-  while(SDL_PollEvent(&event) != 0){
-    if(event.type == SDL_QUIT){
-      this->close();
-    }     
+  if(event.type == SDL_QUIT){
+    this->close();
   }
 }
 

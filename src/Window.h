@@ -6,6 +6,9 @@
 #include "SDL_render.h"
 #include "SDL_surface.h"
 #include "SDL_video.h"
+#include <cstdint>
+
+
 
 
 class Window{
@@ -37,4 +40,14 @@ class Window{
   Window(const Window&) = delete;
   Window& operator=(const Window&) = delete;
   
+};
+
+
+struct Camera{
+  int x = 0;
+  int y = 0;
+  int x_min;
+  int x_max;
+  int y_min;
+  int y_max;  
 };

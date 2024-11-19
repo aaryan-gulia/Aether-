@@ -6,6 +6,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <iostream>
 
 class Tile;
 
@@ -15,15 +16,39 @@ class Map{
   Map() = default;
   void init();
   void render(Window& window);
+  void handleEvent(SDL_Event& event);
 
   private:
     uint32_t m_width = W;
     uint32_t m_height = H;
     std::array<Tile,W * H> m_TileMap;
+    Camera camera;
+    int cam_velocity = 10;
 
     void genDefaultMap();
     std::array<size_t,2> getCoordFromIndex(size_t index);
 };
+
+template <size_t W, size_t H>
+void Map<W,H>::handleEvent(SDL_Event& event){
+
+  if(event.type == SDL_KEYDOWN){
+    switch (event.key.keysym.scancode) {
+      case SDL_SCANCODE_W:
+        camera.y += cam_velocity;
+        break;
+      case SDL_SCANCODE_S:
+        camera.y -= cam_velocity;
+        break;
+      case SDL_SCANCODE_D:
+        camera.x -= cam_velocity;
+        break;
+      case SDL_SCANCODE_A:
+        camera.x += cam_velocity;
+        break;
+    }
+  }
+}
 
 template <size_t W, size_t H>
 void Map<W,H>::render(Window& window){
@@ -34,8 +59,8 @@ void Map<W,H>::render(Window& window){
 
   for(Tile& tile: m_TileMap){
     SDL_Rect dst_rect;
-    dst_rect.x = tile.get_x() * 32;
-    dst_rect.y = tile.get_y() * 32;
+    dst_rect.x = tile.get_x() * 32 + camera.x;
+    dst_rect.y = tile.get_y() * 32 + camera.y;
     dst_rect.w = tile.get_width();
     dst_rect.h = tile.get_height();    
 
