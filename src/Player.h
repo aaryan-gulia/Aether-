@@ -45,6 +45,7 @@ class Player{
     SDL_Rect m_dstRect;
 
     void renderAttack(Window& window);
+    uint32_t attackAnimationFrameCounter(uint32_t maxFrames); 
     void renderRun(Window& window);
     void renderIdle(Window& window);
     void render(Window& window, SDL_RendererFlip flip);

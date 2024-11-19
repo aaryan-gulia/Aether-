@@ -9,6 +9,8 @@ const uint32_t MaxAttackRow = 3;
 const uint32_t MaxRunRow = 5;
 const uint32_t MaxIdleRow = 5;
 
+const uint32_t AttackAnimationFrames = 60;
+
 
 Player::Player(){
   m_srcRect.h = 40;
@@ -34,13 +36,54 @@ void Player::render(Window& window){
   }
 }
 
+void Player::handleEvent(SDL_Event& event){
+  if(event.type == SDL_KEYDOWN){
+    switch (event.key.keysym.scancode) {
+      case SDL_SCANCODE_W:
+        m_currDirection = BACK;
+        m_currAction = RUN;
+        m_y -= m_velocity;
+        break;
+      case SDL_SCANCODE_S:
+        m_currDirection = FRONT;
+        m_currAction = RUN;
+        m_y += m_velocity;
+        break;
+      case SDL_SCANCODE_D:
+        m_currDirection = RIGHT;
+        m_currAction = RUN;
+        m_x += m_velocity;
+        break;
+      case SDL_SCANCODE_A:
+        m_currDirection = LEFT;
+        m_currAction = RUN;
+        m_x -= m_velocity;
+        break;
+      case SDL_SCANCODE_SPACE:
+        m_currAction = ATTACK;
+        break;
+    }
+  }
+}
+
+
+// Encapsulated Function Definations
+uint32_t Player::attackAnimationFrameCounter(uint32_t maxFrames){
+  static uint32_t currFrame;
+  if(currFrame >= maxFrames){
+    m_currAction = IDLE;
+    currFrame = 0;
+  }
+  else{
+    currFrame++;
+  }
+  return currFrame;
+}
+
 void Player::renderAttack(Window& window){
-  auto spriteRow = SpriteRow(MaxAttackRow);
+  uint32_t spriteRow = (attackAnimationFrameCounter(AttackAnimationFrames) * MaxAttackRow) / AttackAnimationFrames;
   updateSrcRect(spriteRow, SpriteColumn());
   render(window, Flip());
-
-  if(spriteRow == MaxAttackRow)
-    m_currAction = IDLE;
 }
 
 void Player::renderRun(Window& window){
@@ -79,41 +122,5 @@ uint32_t Player::SpriteRow(uint32_t MaxRow){
 
 SDL_RendererFlip Player::Flip(){
   return m_currDirection == LEFT? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
-}
-
-void Player::handleEvent(SDL_Event& event){
-  
-  if(event.type == SDL_KEYDOWN){
-    switch (event.key.keysym.scancode) {
-      case SDL_SCANCODE_W:
-        m_currDirection = BACK;
-        m_currAction = RUN;
-        m_y -= m_velocity;
-        break;
-      case SDL_SCANCODE_S:
-        m_currDirection = FRONT;
-        m_currAction = RUN;
-        m_y += m_velocity;
-        break;
-      case SDL_SCANCODE_D:
-        m_currDirection = RIGHT;
-        m_currAction = RUN;
-        m_x += m_velocity;
-        break;
-      case SDL_SCANCODE_A:
-        m_currDirection = LEFT;
-        m_currAction = RUN;
-        m_x -= m_velocity;
-        break;
-      case SDL_SCANCODE_SPACE:
-        m_currAction = ATTACK;
-        break;
-    }
-  }
-  
-}
-
-void updateSrcRect(){
-  SDL_Rect src; 
 }
 
