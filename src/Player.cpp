@@ -1,49 +1,84 @@
 #include "Player.h"
 #include "SDL_rect.h"
 #include "SDL_render.h"
+#include "Window.h"
 #include <cstdint> 
 
 
+const uint32_t MaxAttackRow = 3;
+const uint32_t MaxRunRow = 5;
+const uint32_t MaxIdleRow = 5;
+
+
+Player::Player(){
+  m_srcRect.h = 40;
+  m_srcRect.w = 40;
+
+  m_dstRect.h = 80;
+  m_dstRect.w = 80;
+}
+
 void Player::render(Window& window){
-  auto ticks = SDL_GetTicks();
-  uint32_t spriteRow = m_currAction == ATTACK? (ticks/100) % 4 : (ticks/100) % 6;
-  uint32_t spriteColumn = 3 * (m_currAction - 1) ;
-  SDL_RendererFlip flip = SDL_FLIP_NONE;
-  if(m_currDirection == LEFT){
-    flip = SDL_FLIP_HORIZONTAL;
-    spriteColumn += 1;
+  m_dstRect.x = m_x;
+  m_dstRect.y = m_y;
+  switch (m_currAction) {
+    case IDLE: 
+      renderIdle(window);
+      break;
+    case ATTACK:
+      renderAttack(window);
+      break;
+    case RUN:
+      renderRun(window);
+      break;
   }
-  else{
-    spriteColumn += m_currDirection - 1;
-  }
+}
 
-  SDL_Rect src;
-  src.x = 10 + spriteRow * 48;
-  src.y = 10 + spriteColumn * 48;
-  src.w = 40;
-  src.h = 40;
+void Player::renderAttack(Window& window){
+  auto spriteRow = SpriteRow(MaxAttackRow);
+  updateSrcRect(spriteRow, SpriteColumn());
+  render(window, Flip());
 
-  SDL_Rect dst;
-  dst.x = m_x;
-  dst.y = m_y;
-  dst.w = 80;
-  dst.h = 80;
+  if(spriteRow == MaxAttackRow)
+    m_currAction = IDLE;
+}
 
-  
+void Player::renderRun(Window& window){
+  auto spriteRow = SpriteRow(MaxRunRow);
+  updateSrcRect(spriteRow, SpriteColumn());
+  render(window,Flip());
+
+  if(spriteRow == MaxRunRow)
+    m_currAction = IDLE;
+}
+
+void Player::renderIdle(Window& window){
+  updateSrcRect(SpriteRow(MaxIdleRow), SpriteColumn());
+  render(window,Flip());
+}
+
+void Player::updateSrcRect(uint32_t spriteRow,uint32_t spriteCol){
+  m_srcRect.x = 10 + spriteRow * 48;
+  m_srcRect.y = 10 + spriteCol * 48; 
+}
+
+void Player::render(Window& window, SDL_RendererFlip flip){  
   auto renderer = window.getRenderer();
   auto resourceManager = window.getResourceManager();
-  SDL_RenderCopyEx(renderer, resourceManager->getPlayerTextures(), &src, &dst, 0, NULL, flip);
+  SDL_RenderCopyEx(renderer, resourceManager->getPlayerTextures(), &m_srcRect, &m_dstRect, 0, NULL, flip);
+}
 
-  if(m_currAction == ATTACK){
-    if(spriteRow == 3){
-      m_currAction = IDLE;
-    }
-  }
-  else if (m_currAction == RUN) {
-    if(spriteRow == 5){
-      m_currAction = IDLE;
-    }
-  }
+uint32_t Player::SpriteColumn(){
+  uint32_t spriteColumn = 3 * (m_currAction - 1) ;
+  return m_currDirection == LEFT? spriteColumn + 1 : spriteColumn + m_currDirection - 1;
+}
+
+uint32_t Player::SpriteRow(uint32_t MaxRow){
+  return (SDL_GetTicks()/100) % (1 + MaxRow);
+}
+
+SDL_RendererFlip Player::Flip(){
+  return m_currDirection == LEFT? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
 }
 
 void Player::handleEvent(SDL_Event& event){
@@ -70,10 +105,10 @@ void Player::handleEvent(SDL_Event& event){
         m_currAction = RUN;
         m_x -= m_velocity;
         break;
+      case SDL_SCANCODE_SPACE:
+        m_currAction = ATTACK;
+        break;
     }
-  }
-  else if(event.type == SDL_KEYUP && event.key.keysym.scancode == SDL_SCANCODE_H){
-    m_currAction = ATTACK;
   }
   
 }
