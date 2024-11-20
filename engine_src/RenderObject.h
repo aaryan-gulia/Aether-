@@ -9,8 +9,8 @@
 namespace AetherEngine {
   class RenderObject{
     public:
-      RenderObject(SDL_Texture* texture, Rect& srcRect, SDL_RendererFlip flip = SDL_FLIP_NONE)
-      :m_Texture(texture), m_SrcRect(*srcRect.getRawRect()), m_scaling(), m_flip(flip), m_id(++objectCounter){}
+      RenderObject(SDL_Texture* texture, Rect& srcRect, SDL_RendererFlip flip = SDL_FLIP_NONE, float scaling = 1)
+      :m_Texture(texture), m_SrcRect(*srcRect.getRawRect()), m_scaling(scaling), m_flip(flip), m_id(++objectCounter){}
 
       ~RenderObject() = default;
 
@@ -28,6 +28,14 @@ namespace AetherEngine {
 
       const uint32_t getScale() const{
         return m_scaling;
+      }
+
+      const uint32_t id() const{
+        return m_id;
+      }
+
+      static void resetObjectCounter(){
+        objectCounter = 0;
       }
       
     private:
