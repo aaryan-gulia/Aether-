@@ -12,8 +12,18 @@ namespace AetherEngine {
 
 class Rect{
   public:
-    Rect(int x_position, int y_position, int width, int height);
-    ~Rect();
+    Rect(int x_position, int y_position, uint32_t width, uint32_t height):m_rect(){
+      m_rect.x = x_position;
+      m_rect.y = y_position;
+      m_rect.w = width;
+      m_rect.h = height;
+    }
+    ~Rect() = default;
+
+    Rect(Rect& rect) = delete;
+    void operator=(Rect& rect) = delete;
+
+    SDL_Rect* getRawRect(){ return &m_rect; }
 
   private:
     SDL_Rect m_rect;
@@ -38,40 +48,6 @@ class Window{
     SDL_Window* m_Window = NULL;
 };
 
-class Renderer{
-  public:
-    Renderer(Window& window){
-      m_renderer = window.getRenderer();
-      
-      if(!m_renderer){
-        std::cout<<"Error creating SDL window surface: "<<SDL_GetError()<<std::endl;
-      }   
-    }
-
-
-    SDL_Texture* loadTexture(const char* textureFileName){
-      SDL_Surface* tempSurface = IMG_Load(textureFileName);
-      SDL_Texture* tex = SDL_CreateTextureFromSurface(m_renderer, tempSurface);
-      return tex;
-    }
-
-  private:
-    SDL_Renderer* m_renderer = NULL;
-};
-
-class Texture{
-  public:
-    Texture(Renderer& renderer, const char* textureFileName){
-      m_texture = renderer.loadTexture(textureFileName);
-
-      if(!m_texture){
-        std::cout<<"Error Loading SDL Texture"<<SDL_GetError();
-      }
-    }
-
-  private:
-    SDL_Texture* m_texture = NULL;
-};
   
 }
 
