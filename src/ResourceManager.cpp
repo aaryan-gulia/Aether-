@@ -52,7 +52,7 @@ void ResourceManager::init(const char* loading_instruction_file){
     uint32_t max_frames = max_frames_list[animation].asInt();
 
     m_AnimationObjectIds.emplace_back(Engine::loadAnimationObject(texture, srcRects, false, max_frames));
-    if(std::find(flipped_animations.begin(), flipped_animations.end(), 1) != flipped_animations.end()){
+    if(std::find(flipped_animations.begin(), flipped_animations.end(), animation+1) != flipped_animations.end()){
       m_AnimationObjectIds.emplace_back(Engine::loadAnimationObject(texture, srcRects, true, max_frames));
     }
   }

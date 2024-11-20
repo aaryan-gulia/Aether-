@@ -13,26 +13,83 @@ const uint32_t AttackAnimationFrames = 60;
 
 
 Player::Player(){
-  m_srcRect.h = 40;
-  m_srcRect.w = 40;
-
-  m_dstRect.h = 80;
-  m_dstRect.w = 80;
+  m_resourceManager.init("../resources/player_sprite.json");
 }
 
-void Player::render(Window& window){
-  m_dstRect.x = m_x;
-  m_dstRect.y = m_y;
-  switch (m_currAction) {
-    case IDLE: 
-      renderIdle(window);
-      break;
-    case ATTACK:
-      renderAttack(window);
-      break;
-    case RUN:
-      renderRun(window);
-      break;
+void Player::render(){
+  setState();
+  uint32_t animationId = m_resourceManager.getAnimationObjectIdAt(m_state);
+  if(m_currAction == ATTACK){
+    Engine::animateWithFrames(animationId, m_x, m_y);
+    if(Engine::isAnimationComplete(animationId)){
+      m_currAction = IDLE;
+    }
+  }
+  else{
+    Engine::animate(animationId, m_x, m_y);
+  }
+}
+
+void Player::setState(){
+  switch (m_currDirection) {
+    case BACK:{
+        switch (m_currAction) {
+          case IDLE:
+            m_state = BACK_IDLE;
+            break;
+          case ATTACK:
+            m_state = BACK_ATTACK;
+            break;
+          case RUN:
+            m_state = BACK_RUN;
+            break;
+        }
+      } 
+    case FRONT:{
+        switch (m_currAction) {
+          case IDLE:
+            m_state = FRONT_IDLE;
+            break;
+          case ATTACK:
+            m_state = FRONT_ATTACK;
+            break;
+          case RUN:
+            m_state = FRONT_RUN;
+            break;
+        }
+        
+      }
+    case RIGHT:{
+        switch (m_currAction) {
+          case IDLE:
+            m_state = RIGHT_IDLE;
+            break;
+          case ATTACK:
+            m_state = RIGHT_ATTACK;
+            break;
+          case RUN:
+            m_state = RIGHT_RUN;
+            break;
+        }
+        
+      }
+    case LEFT:{
+        switch (m_currAction) {
+          case IDLE:
+            m_state = LEFT_IDLE;
+            break;
+          case ATTACK:
+            m_state = LEFT_ATTACK;
+            break;
+          case RUN:
+            m_state = LEFT_RUN;
+            break;
+        }
+        
+      }
+  }
+  if(m_currAction == DYING){
+    m_state = DEAD;
   }
 }
 
@@ -66,61 +123,4 @@ void Player::handleEvent(SDL_Event& event){
   }
 }
 
-
-// Encapsulated Function Definations
-uint32_t Player::attackAnimationFrameCounter(uint32_t maxFrames){
-  static uint32_t currFrame;
-  if(currFrame >= maxFrames){
-    m_currAction = IDLE;
-    currFrame = 0;
-  }
-  else{
-    currFrame++;
-  }
-  return currFrame;
-}
-
-void Player::renderAttack(Window& window){
-  uint32_t spriteRow = (attackAnimationFrameCounter(AttackAnimationFrames) * MaxAttackRow) / AttackAnimationFrames;
-  updateSrcRect(spriteRow, SpriteColumn());
-  render(window, Flip());
-}
-
-void Player::renderRun(Window& window){
-  auto spriteRow = SpriteRow(MaxRunRow);
-  updateSrcRect(spriteRow, SpriteColumn());
-  render(window,Flip());
-
-  if(spriteRow == MaxRunRow)
-    m_currAction = IDLE;
-}
-
-void Player::renderIdle(Window& window){
-  updateSrcRect(SpriteRow(MaxIdleRow), SpriteColumn());
-  render(window,Flip());
-}
-
-void Player::updateSrcRect(uint32_t spriteRow,uint32_t spriteCol){
-  m_srcRect.x = 10 + spriteRow * 48;
-  m_srcRect.y = 10 + spriteCol * 48; 
-}
-
-void Player::render(Window& window, SDL_RendererFlip flip){  
-  auto renderer = window.getRenderer();
-  auto resourceManager = window.getResourceManager();
-  SDL_RenderCopyEx(renderer, resourceManager->getPlayerTextures(), &m_srcRect, &m_dstRect, 0, NULL, flip);
-}
-
-uint32_t Player::SpriteColumn(){
-  uint32_t spriteColumn = 3 * (m_currAction - 1) ;
-  return m_currDirection == LEFT? spriteColumn + 1 : spriteColumn + m_currDirection - 1;
-}
-
-uint32_t Player::SpriteRow(uint32_t MaxRow){
-  return (SDL_GetTicks()/100) % (1 + MaxRow);
-}
-
-SDL_RendererFlip Player::Flip(){
-  return m_currDirection == LEFT? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
-}
 
