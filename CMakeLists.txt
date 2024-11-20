@@ -10,8 +10,6 @@ add_subdirectory(src)
 
 
 include(cmake/tests.cmake)
-include(GoogleTest)
-find_package(GTest REQUIRED)
 enable_testing()
 add_subdirectory(tests)
 
