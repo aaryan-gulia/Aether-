@@ -39,7 +39,11 @@ endif()
 
 find_package(jsoncpp REQUIRED)
 
-add_library(${PROJECT_NAME} Engine.cpp)
+add_library(${PROJECT_NAME} 
+  Engine.cpp
+  Renderer.cpp
+  AnimationObject.cpp
+)
 
 target_link_libraries(${PROJECT_NAME} SDL2 SDL2_image jsoncpp_lib)
 target_include_directories(${PROJECT_NAME} PUBLIC .)

@@ -31,7 +31,9 @@ class Rect{
 
 class Window{
   public:
-    Window(int width, int height, const char* title){
+    Window() = default;
+    
+    void Init(int width, int height, const char* title){
       m_Window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_RESIZABLE);
 
       if(!m_Window){
