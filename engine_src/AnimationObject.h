@@ -19,7 +19,6 @@ namespace AetherEngine {
       bool isAnimationComplete();
 
       uint32_t id() { return m_id; }
-      static void resetObjectCounter() {objectCounter = 0;}
 
     private:
       static uint32_t objectCounter;

@@ -11,10 +11,9 @@
 #include <sys/types.h>
 #include <unordered_set>
 
-namespace AetherEngine {
-
+using namespace AetherEngine;
   
-class AetherEngine{
+class Engine{
   public:
 
     static void Init(uint32_t windowHeight, uint32_t windowWidth, const char* title){
@@ -24,9 +23,6 @@ class AetherEngine{
 
       m_window.Init(windowWidth, windowWidth, title);
       m_renderer.Init(m_window);
-
-      RenderObject::resetObjectCounter();
-      AnimationObject::resetObjectCounter();
     }
 
     static SDL_Texture* loadTexture(const char* textureFileName){
@@ -62,14 +58,21 @@ class AetherEngine{
       return m_resourceManager.getAnimationObject(animationObjectId).isAnimationComplete();
     }
 
+    static void clear(){
+      m_renderer.clear();
+    }
+
+    static void present(){
+      m_renderer.present();
+    }
+
     static void ShutDown();
 
-    ~AetherEngine();
+    ~Engine();
 
   private:
     static Window m_window;
     static Renderer m_renderer;
     static ResourceManager m_resourceManager;
 };
-}
 

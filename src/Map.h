@@ -1,21 +1,29 @@
 
 #pragma once
 
-#include "Window.h"
-
+#include "Engine.h"
+#include "Tile.h"
 #include <array>
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
+#include "json/json.h"
+#include "fstream"
 
-class Tile;
+const char* TilesheetFile = "../resources/tilesheet.json";
+
+
+struct Camera{
+  int x;
+  int y; 
+};
 
 template <size_t W, size_t H>
 class Map{
   public:
   Map() = default;
   void init();
-  void render(Window& window);
+  void render();
   void handleEvent(SDL_Event& event);
 
   private:
@@ -24,6 +32,9 @@ class Map{
     std::array<Tile,W * H> m_TileMap;
     Camera camera;
     int cam_velocity = 10;
+
+    uint32_t wallRenderObjectId;
+    uint32_t grassRenderObjectId;
 
     void genDefaultMap();
     std::array<size_t,2> getCoordFromIndex(size_t index);
@@ -51,29 +62,45 @@ void Map<W,H>::handleEvent(SDL_Event& event){
 }
 
 template <size_t W, size_t H>
-void Map<W,H>::render(Window& window){
-
-  auto renderer = window.getRenderer();
-  auto resourceManager = window.getResourceManager();
-
+void Map<W,H>::render(){
 
   for(Tile& tile: m_TileMap){
     SDL_Rect dst_rect;
     dst_rect.x = tile.get_x() * 32 + camera.x;
     dst_rect.y = tile.get_y() * 32 + camera.y;
-    dst_rect.w = tile.get_width();
-    dst_rect.h = tile.get_height();    
 
-    SDL_RenderCopy(renderer, resourceManager->getTileTextures()  ,resourceManager->getTileSrcRect(tile.get_type()), &dst_rect);
+    uint32_t id = tile.get_type() == Tile::WALL? wallRenderObjectId : grassRenderObjectId;
+    Engine::render(id, tile.get_x() * 32, tile.get_y() * 32);
+
     
   }  
     
   
 }
 
+
 template<size_t W, size_t H>
 void Map<W,H>::init(){
   genDefaultMap();  
+
+  
+  std::ifstream tilesheet_info_file(TilesheetFile, std::ifstream::binary);
+
+  Json::Value tilesheet_info;
+  tilesheet_info_file >> tilesheet_info;
+  auto tilesheet_path = tilesheet_info["tilesheet_path"];
+
+
+  Rect srcRectGrass(tilesheet_info["tiles"]["grass"]["x"].asInt(), 
+                    tilesheet_info["tiles"]["grass"]["y"].asInt(), 32,32);
+  Rect srcRectWall(tilesheet_info["tiles"]["wall"]["x"].asInt(), 
+                    tilesheet_info["tiles"]["wall"]["y"].asInt(), 32,32);
+
+  auto texture = Engine::loadTexture(tilesheet_path.asCString());
+  wallRenderObjectId = Engine::loadRenderObject(texture, &srcRectWall);
+  grassRenderObjectId = Engine::loadRenderObject(texture, &srcRectGrass);
+
+  tilesheet_info_file.close();
 }
 
 template<size_t W, size_t H>

@@ -43,6 +43,7 @@ add_library(${PROJECT_NAME}
   Engine.cpp
   Renderer.cpp
   AnimationObject.cpp
+  RenderObject.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} SDL2 SDL2_image jsoncpp_lib)

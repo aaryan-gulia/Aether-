@@ -22,3 +22,5 @@ RenderObject& AnimationObject::animateWithFrames(){
 bool AnimationObject::isAnimationComplete(){
   return animationComplete;
 }
+
+uint32_t AnimationObject::objectCounter = 0;

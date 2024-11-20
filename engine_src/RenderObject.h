@@ -34,9 +34,6 @@ namespace AetherEngine {
         return m_id;
       }
 
-      static void resetObjectCounter(){
-        objectCounter = 0;
-      }
       
     private:
       SDL_Texture* m_Texture;      

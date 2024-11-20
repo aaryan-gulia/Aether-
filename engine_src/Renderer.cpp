@@ -46,3 +46,11 @@ void Renderer::render(RenderObject& ro, int x_position, int y_position) const{
   Rect dstRect(x_position, y_position, srcRect->w * ro.getScale(), srcRect->h * ro.getScale());
   SDL_RenderCopyEx(m_renderer, ro.getRawTexture(), srcRect, dstRect.getRawRect() , 0, NULL, ro.getRawFlip());
 }
+
+void Renderer::clear() const{
+  SDL_RenderClear(m_renderer);
+}
+
+void Renderer::present() const{
+  SDL_RenderPresent(m_renderer);
+}

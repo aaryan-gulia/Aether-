@@ -1,8 +1,7 @@
 
 
 #pragma once
-
-#include "Window.h"
+#include "SDL.h"
 
 class Game{
 

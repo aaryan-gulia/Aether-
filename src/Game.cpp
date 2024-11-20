@@ -1,11 +1,10 @@
 #include "Game.h"
 #include "Map.h"
-#include "Player.h"
-#include "SDL_events.h"
-#include "SDL_rect.h"
-#include "SDL_render.h"
 
+#include "SDL_events.h"
 #include "SDL.h"
+
+#include "Engine.h"
 
 #include <cstdint>
 #include <iostream>
@@ -16,11 +15,8 @@ const char* WindowTitle = "Aether Souls";
 
 void Game::run(){
 
-  Window window(WindowHeight, WindowWidth, WindowTitle);
-
   SDL_Event event;
-  Map<100,100> map;
-  Player player;
+  Map<50,50> map;
   map.init();
   
 
@@ -29,22 +25,16 @@ void Game::run(){
     while(SDL_PollEvent(&event) != 0){
       handleEvent(event);
       map.handleEvent(event);
-      player.handleEvent(event);
     }
    
-    window.clear();
-    map.render(window);
-    player.render(window);
-    window.render();    
+    Engine::clear();
+    map.render();
+    Engine::present();    
   }
 }
 
 void Game::initialise(){
-  if(SDL_Init(SDL_INIT_EVERYTHING) < 0){
-    std::cout<<"SDL Initialise Failed!"<<std::endl;
-  }
-
-  std::cout<<"SDL Initialised"<<std::endl;
+  Engine::Init(WindowHeight, WindowWidth, WindowTitle);
 }
 
 void Game::handleEvent(SDL_Event& event){
