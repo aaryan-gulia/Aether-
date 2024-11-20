@@ -5,11 +5,15 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-enable_testing()
-
-
 add_subdirectory(engine_src)
 add_subdirectory(src)
+
+
+include(cmake/tests.cmake)
+include(GoogleTest)
+find_package(GTest REQUIRED)
+enable_testing()
+add_subdirectory(tests)
 
 
 execute_process(
