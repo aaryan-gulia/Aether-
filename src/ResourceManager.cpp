@@ -1,84 +1,62 @@
 #include "ResourceManager.h"
+#include "Engine.h"
+
 #include "SDL_rect.h"
 
 #include "json/json.h"
+#include <algorithm>
 #include <cstdint>
 #include <fstream>
 #include <iostream>
 
 const char* TilesheetFile = "../resources/tilesheet.json";
 
-void ResourceManager::init(SDL_Renderer* renderer){
-  loadTileTextures(TilesheetFile, renderer);
-  loadTileSrcRects(TilesheetFile);
-  loadPlayerSprite(TilesheetFile, renderer);
-}
+void ResourceManager::init(const char* loading_instruction_file){
+  std::ifstream loading_info_json(loading_instruction_file, std::ifstream::binary);
 
+  Json::Value loading_info;
+  loading_info_json >> loading_info;
 
+  auto texture = Engine::loadTexture(loading_info["path"].asCString());
+  int num_animations = loading_info["num_animations"].asInt();
+  auto num_sprites_list = loading_info["num_sprites_per_animation"];
+  auto max_frames_list = loading_info["max_frames_if_valid_else_0"];
 
-void ResourceManager::loadTileTextures(const char* json_file_name, SDL_Renderer* renderer){
-
-  std::ifstream tilesheet_info_file(json_file_name, std::ifstream::binary);
-
-  Json::Value tilesheet_info;
-  tilesheet_info_file >> tilesheet_info;
-
-  auto tilesheet_path = tilesheet_info["tilesheet_path"];
-
-  SDL_Surface* tempSurface = IMG_Load(tilesheet_path.asCString());
-  SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, tempSurface);
-  m_TilesTextures = tex;
-
-  if(!m_TilesTextures){
-    std::cout<<"Error creating SDL Texture: "<<SDL_GetError()<<std::endl;    
-  }
-
-  tilesheet_info_file.close();
-}
-
-void ResourceManager::loadTileSrcRects(const char* json_file_name){
-  std::ifstream tilesheet_info_file(json_file_name, std::ifstream::binary);
-  Json::Value tilesheet_info;
-  tilesheet_info_file >> tilesheet_info;
-
-  m_TilesSrcRects.emplace_back(buildTileSrcRect(tilesheet_info["tiles"]["grass"]["x"].asInt(), 
-                                                tilesheet_info["tiles"]["grass"]["y"].asInt()));
-  m_TilesSrcRects.emplace_back(buildTileSrcRect(tilesheet_info["tiles"]["wall"]["x"].asInt(), 
-                                                tilesheet_info["tiles"]["wall"]["y"].asInt()));
-
-  tilesheet_info_file.close();
-}
-
-SDL_Rect ResourceManager::buildTileSrcRect(uint32_t x_pos, uint32_t y_pos){
-  SDL_Rect src_rect;
-  src_rect.x = x_pos;
-  src_rect.y = y_pos;
-  src_rect.h = 32;
-  src_rect.w = 32;
-
-  return src_rect;
-}
-
-void ResourceManager::loadPlayerSprite(const char* json_file_name, SDL_Renderer* renderer){
-
-  SDL_Surface* tempSurface = IMG_Load("../resources/mystic_woods_free_2/sprites/characters/player.png");
-  SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, tempSurface);
-  m_PlayerTextures = tex;
-
-  if(!m_PlayerTextures){
-    std::cout<<"Error creating SDL Player Texture: "<<SDL_GetError()<<std::endl;    
-  }
+  int x_padding = loading_info["x_padding"].asInt();
+  int x_size = loading_info["x_size"].asInt();
+  int x_spacing = loading_info["x_spaceing"].asInt();
   
+  int y_padding = loading_info["y_padding"].asInt();
+  int y_size = loading_info["y_size"].asInt();
+  int y_spacing = loading_info["y_spaceing"].asInt();
+
+  int num_flipped_animations = loading_info["num_flipped_animations"].asInt();
+  auto flipped_animations_list = loading_info["flipped_animations"];
+  std::vector<uint64_t> flipped_animations;
+  for(uint32_t i = 0; i < num_flipped_animations; i++){
+    flipped_animations.push_back(flipped_animations_list[i].asUInt64());
+  }
+
+  for(uint32_t animation = 0; animation < num_animations ;animation++){
+    std::vector<AetherEngine::Rect> srcRects;
+
+    for(uint32_t sprite = 0; sprite < num_sprites_list[animation].asInt(); sprite++){
+      srcRects.emplace_back(
+        int(x_padding + sprite*(x_spacing + x_size)),
+        int(y_padding + sprite*(x_spacing + x_size)),
+        uint32_t(x_size),
+        uint32_t(y_size)
+      );
+    }
+
+    uint32_t max_frames = max_frames_list[animation].asInt();
+
+    m_AnimationObjectIds.emplace_back(Engine::loadAnimationObject(texture, srcRects, false, max_frames));
+    if(std::find(flipped_animations.begin(), flipped_animations.end(), 1) != flipped_animations.end()){
+      m_AnimationObjectIds.emplace_back(Engine::loadAnimationObject(texture, srcRects, true, max_frames));
+    }
+  }
 }
 
-SDL_Texture* ResourceManager::getTileTextures(){
-  return m_TilesTextures;
-}
 
-SDL_Rect* ResourceManager::getTileSrcRect(Tile::Type type){
-  return &m_TilesSrcRects.at(type);
-}
 
-SDL_Texture* ResourceManager::getPlayerTextures(){
-  return m_PlayerTextures;
-}
