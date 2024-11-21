@@ -19,7 +19,7 @@ class Player{
     enum Action{IDLE = 1,RUN = 2,ATTACK = 3, DYING = 4};
 
     enum State{FRONT_IDLE = 0, RIGHT_IDLE = 1, LEFT_IDLE = 2, BACK_IDLE = 3,
-               FRONT_RUN = 5, RIGHT_RUN = 5, LEFT_RUN = 6, BACK_RUN = 7,
+               FRONT_RUN = 4, RIGHT_RUN = 5, LEFT_RUN = 6, BACK_RUN = 7,
                FRONT_ATTACK = 8, RIGHT_ATTACK = 9, LEFT_ATTACK = 10, BACK_ATTACK = 11,
                DEAD = 12};
     

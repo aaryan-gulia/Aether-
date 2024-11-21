@@ -91,9 +91,9 @@ void Map<W,H>::init(){
   auto tilesheet_path = tilesheet_info["tilesheet_path"];
 
 
-  Rect srcRectGrass(tilesheet_info["tiles"]["grass"]["x"].asInt(), 
+  AetherEngine::Rect srcRectGrass(tilesheet_info["tiles"]["grass"]["x"].asInt(), 
                     tilesheet_info["tiles"]["grass"]["y"].asInt(), 32,32);
-  Rect srcRectWall(tilesheet_info["tiles"]["wall"]["x"].asInt(), 
+  AetherEngine::Rect srcRectWall(tilesheet_info["tiles"]["wall"]["x"].asInt(), 
                     tilesheet_info["tiles"]["wall"]["y"].asInt(), 32,32);
 
   auto texture = Engine::loadTexture(tilesheet_path.asCString());

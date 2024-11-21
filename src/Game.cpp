@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Map.h"
+#include "Player.h"
 
 #include "SDL_events.h"
 #include "SDL.h"
@@ -17,6 +18,7 @@ void Game::run(){
 
   SDL_Event event;
   Map<50,50> map;
+  Player player;
   map.init();
   
 
@@ -25,10 +27,12 @@ void Game::run(){
     while(SDL_PollEvent(&event) != 0){
       handleEvent(event);
       map.handleEvent(event);
+      player.handleEvent(event);
     }
    
     Engine::clear();
     map.render();
+    player.render();
     Engine::present();    
   }
 }

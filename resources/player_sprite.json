@@ -1,0 +1,14 @@
+{
+  "path" : "../resources/mystic_woods_free_2/sprites/characters/player.png",
+  "num_animations" : 10,
+  "num_flipped_animations" : 3,
+   "x_padding" : 10,
+   "y_padding" : 10,
+   "x_size" : 40,
+   "y_size" : 40,
+   "x_spacing" : 48,
+   "y_spacing" : 48,
+   "max_frames_if_valid_else_0" : [10 , 10 , 10 , 60 , 60 , 60 , 60 , 60 , 60 , 500],
+   "num_sprites_per_animation" : [6 , 6 , 6 , 6 , 6 , 6 , 4 , 4 , 4 , 3],
+   "flipped_animations" : [2 , 5 , 8],
+}

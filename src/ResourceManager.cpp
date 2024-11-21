@@ -9,7 +9,6 @@
 #include <fstream>
 #include <iostream>
 
-const char* TilesheetFile = "../resources/tilesheet.json";
 
 void ResourceManager::init(const char* loading_instruction_file){
   std::ifstream loading_info_json(loading_instruction_file, std::ifstream::binary);
@@ -24,11 +23,11 @@ void ResourceManager::init(const char* loading_instruction_file){
 
   int x_padding = loading_info["x_padding"].asInt();
   int x_size = loading_info["x_size"].asInt();
-  int x_spacing = loading_info["x_spaceing"].asInt();
+  int x_spacing = loading_info["x_spacing"].asInt();
   
   int y_padding = loading_info["y_padding"].asInt();
   int y_size = loading_info["y_size"].asInt();
-  int y_spacing = loading_info["y_spaceing"].asInt();
+  int y_spacing = loading_info["y_spacing"].asInt();
 
   int num_flipped_animations = loading_info["num_flipped_animations"].asInt();
   auto flipped_animations_list = loading_info["flipped_animations"];
@@ -42,8 +41,8 @@ void ResourceManager::init(const char* loading_instruction_file){
 
     for(uint32_t sprite = 0; sprite < num_sprites_list[animation].asInt(); sprite++){
       srcRects.emplace_back(
-        int(x_padding + sprite*(x_spacing + x_size)),
-        int(y_padding + sprite*(x_spacing + x_size)),
+        int(x_padding + sprite*(x_spacing)),
+        int(y_padding + animation*(y_spacing)),
         uint32_t(x_size),
         uint32_t(y_size)
       );
@@ -51,11 +50,14 @@ void ResourceManager::init(const char* loading_instruction_file){
 
     uint32_t max_frames = max_frames_list[animation].asInt();
 
+    //TODO: implement scaling in json and read here
+
     m_AnimationObjectIds.emplace_back(Engine::loadAnimationObject(texture, srcRects, false, max_frames));
     if(std::find(flipped_animations.begin(), flipped_animations.end(), animation+1) != flipped_animations.end()){
       m_AnimationObjectIds.emplace_back(Engine::loadAnimationObject(texture, srcRects, true, max_frames));
     }
   }
+
 }
 
 

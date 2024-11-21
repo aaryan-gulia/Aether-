@@ -1,0 +1,20 @@
+{
+  "levels": [1 , 2],
+  "tile_width": 32,
+  "tile_height": 32,
+
+  "maps":[
+    {
+      "width": 100,
+      "height": 100,
+      "default_tile": "grass",
+      "wall_tiles": [[5,5],[25,25],[5,25],[25,5]]
+    },
+    {
+      "width": 100,
+      "height": 100,
+      "default_tile": "grass",
+      "wall_tiles": [[5,5],[25,25],[5,25],[25,5]]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "SDL_rect.h"
 #include "SDL_render.h"
+#include "SDL_scancode.h"
 #include "Window.h"
 #include <cstdint> 
 
@@ -17,12 +18,12 @@ Player::Player(){
 }
 
 void Player::render(){
-  setState();
   uint32_t animationId = m_resourceManager.getAnimationObjectIdAt(m_state);
-  if(m_currAction == ATTACK){
+  if(m_currAction != IDLE){
     Engine::animateWithFrames(animationId, m_x, m_y);
     if(Engine::isAnimationComplete(animationId)){
       m_currAction = IDLE;
+      setState();
     }
   }
   else{
@@ -44,6 +45,7 @@ void Player::setState(){
             m_state = BACK_RUN;
             break;
         }
+        break;
       } 
     case FRONT:{
         switch (m_currAction) {
@@ -57,6 +59,7 @@ void Player::setState(){
             m_state = FRONT_RUN;
             break;
         }
+        break;
         
       }
     case RIGHT:{
@@ -71,6 +74,7 @@ void Player::setState(){
             m_state = RIGHT_RUN;
             break;
         }
+        break;
         
       }
     case LEFT:{
@@ -85,6 +89,7 @@ void Player::setState(){
             m_state = LEFT_RUN;
             break;
         }
+        break;
         
       }
   }
@@ -97,29 +102,38 @@ void Player::handleEvent(SDL_Event& event){
   if(event.type == SDL_KEYDOWN){
     switch (event.key.keysym.scancode) {
       case SDL_SCANCODE_W:
+        std::cout<<"Current Player State: "<<m_state<<std::endl;
         m_currDirection = BACK;
         m_currAction = RUN;
+        Engine::setAnimationFrame(m_resourceManager.getAnimationObjectIdAt(m_state), 0);
         m_y -= m_velocity;
         break;
       case SDL_SCANCODE_S:
         m_currDirection = FRONT;
         m_currAction = RUN;
+        Engine::setAnimationFrame(m_resourceManager.getAnimationObjectIdAt(m_state), 0);
         m_y += m_velocity;
         break;
       case SDL_SCANCODE_D:
         m_currDirection = RIGHT;
         m_currAction = RUN;
+        Engine::setAnimationFrame(m_resourceManager.getAnimationObjectIdAt(m_state), 0);
         m_x += m_velocity;
         break;
       case SDL_SCANCODE_A:
         m_currDirection = LEFT;
         m_currAction = RUN;
+        Engine::setAnimationFrame(m_resourceManager.getAnimationObjectIdAt(m_state), 0);
         m_x -= m_velocity;
         break;
       case SDL_SCANCODE_SPACE:
         m_currAction = ATTACK;
         break;
+      case SDL_SCANCODE_BACKSPACE:
+        m_currAction = DYING;
+        break;
     }
+    setState();
   }
 }
 
